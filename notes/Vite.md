@@ -2,7 +2,7 @@
  * @Author: wangzhiyu <w19165802736@163.com>
  * @version: 1.0.0
  * @Date: 2023-12-17 20:30:17
- * @LastEditTime: 2024-01-03 22:25:26
+ * @LastEditTime: 2024-01-03 22:34:38
  * @Descripttion: Vite学习笔记
 -->
 
@@ -59,6 +59,12 @@
 
 2. 模块热替换
 
+- Vite 准备了一整套原生的 ESM 的 HMR(hot module replace)API,具有 HMR 功能的框架可以利用这些 API 提供实时,准确的更新,不需要加载整个页面以及清楚应用程序的状态,并且 vite 也内置了 HMR 到 Vue 单文件组件(SFC)与 React Fast Refresh 中
+
+- 注意 Vite 的模块热替换不需要手动配置,这些都是 Vite 内置好的功能,只需要根据需求再对配置进行修改即可
+
+- [Vite 的 HMR API 地址](https://cn.vitejs.dev/guide/api-hmr)
+
 3. TypeScript
 
 4. Vue
@@ -80,3 +86,23 @@
 12. Web Workers
 
 13. 构建优化
+
+## Vite 的配置
+
+### 1. [配置 Vite](https://cn.vitejs.dev/config/)
+
+### 2. [共享配置](https://cn.vitejs.dev/config/shared-options.html)
+
+### 3. [开发服务器选项](https://cn.vitejs.dev/config/server-options.html)
+
+### 4. [构建选项](https://cn.vitejs.dev/config/build-options.html)
+
+### 5. [配置 Vite](https://cn.vitejs.dev/config/)
+
+### 6. [预览选项](https://cn.vitejs.dev/config/preview-options.html)
+
+### 7. [依赖优化选项](https://cn.vitejs.dev/config/dep-optimization-options.html)
+
+### 8. [SSR 选项](https://cn.vitejs.dev/config/ssr-options.html)
+
+### 9. [Worker 选项](https://cn.vitejs.dev/config/worker-options.html)
