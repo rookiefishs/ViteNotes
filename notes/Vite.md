@@ -2,7 +2,7 @@
  * @Author: wangzhiyu <w19165802736@163.com>
  * @version: 1.0.0
  * @Date: 2023-12-17 20:30:17
- * @LastEditTime: 2024-01-03 22:34:38
+ * @LastEditTime: 2024-01-04 21:51:35
  * @Descripttion: Vite学习笔记
 -->
 
@@ -59,13 +59,52 @@
 
 2. 模块热替换
 
-- Vite 准备了一整套原生的 ESM 的 HMR(hot module replace)API,具有 HMR 功能的框架可以利用这些 API 提供实时,准确的更新,不需要加载整个页面以及清楚应用程序的状态,并且 vite 也内置了 HMR 到 Vue 单文件组件(SFC)与 React Fast Refresh 中
+   - Vite 准备了一整套原生的 ESM 的 HMR(hot module replace)API,具有 HMR 功能的框架可以利用这些 API 提供实时,准确的更新,不需要加载整个页面以及清楚应用程序的状态,并且 vite 也内置了 HMR 到 Vue 单文件组件(SFC)与 React Fast Refresh 中
 
-- 注意 Vite 的模块热替换不需要手动配置,这些都是 Vite 内置好的功能,只需要根据需求再对配置进行修改即可
+   - 注意 Vite 的模块热替换不需要手动配置,这些都是 Vite 内置好的功能,只需要根据需求再对配置进行修改即可
 
-- [Vite 的 HMR API 地址](https://cn.vitejs.dev/guide/api-hmr)
+   - [Vite 的 HMR API 地址](https://cn.vitejs.dev/guide/api-hmr)
 
 3. TypeScript
+
+   - 仅执行转译:
+
+     - 简介: Vite 只会执行对.ts 文件的转译工作,并不会执行任何类型检查,因为类型检查已经被开发使用的 IDE 编辑器在构建过程中处理过了
+     - 原因: Vite 之所以不将类型检查作为转换过程中的一部分,是因为这两项工作在本质上是不同的,转译可以在每个文件基础上进行,与 Vite 的编译模式完全吻合,但是类型检查需要了解整个模块图,将类型检查塞进 Vite 的转换通道,将会不可避免的影响 Vite 的速度优势
+     - 补充: 如果在开发时需要更多的 IDE 提示,建议在一个单独的进程中运行 tsc -noEmit -watch,或者希望在浏览器中直接看到错误,可以使用 vite-plugin-checker 插件
+
+   - TypeScript 编译器选项
+
+     - tsconfig.json 中的 compilerOptions 下的一些配置项需要特别注意
+
+       ```js
+       // isolatedModules(https://www.typescriptlang.org/tsconfig#isolatedModules) 应该设置为true
+       // 1. 这是因为esbuild只会执行没有类型信息的转译,它并不支持某些特性,例如const enum和隐式类型导入
+       // 2. 所以必须tsconfig.json中的compilerOptions下设置"isolatedModules":true,这样做,ts就会警告开发者不要使用隔离(isolated)转译的功能
+       // 3. 补充: 一些库不能很好的与"isolateMoudles":true,这个问题可以在上游仓库修复好之前 暂时的使用"skipLibCheck":true来缓解这个错误
+
+       // useDefineForClassFields(https://www.typescriptlang.org/tsconfig#useDefineForClassFields)
+       // 1. 从Vite2.5.0开始,如果ts的target是ESNext或ES200,此选项默认为true,这与tsc 4.3.2以及以后版本的行为一致,这也是标准的ECMAScript的运行时行为
+       // 2. 如果设置了其他ts目标,则本项会默认为false
+
+       // target(https://www.typescriptlang.org/tsconfig#target) Vite不会默认转译TSD,而是使用esbuild的默认行为
+       // 1. 此esbuild.target选项可以用来代替上述行为,默认值为esnext,以进行最小的转译,在构建中,build.target选项优先级更好,如果需要也可以设置
+       // 2. 可能影响构建见过的其他编译器选项: estends importsNotUseAsValues preserveValueImports jsx jsxFactory jsxImportSoure experimentalDecorators alwaysStrict skipLibCheck  Vite启动模板默认情况下会设置"skipLibCheck":"true",以避免对依赖项进行检查,因为它们可能支持特定版本和配置的TS
+       ```
+
+   - 客户端类型
+
+     - Vite 默认的类型定义式写给它的 NodejsAPI 的,要将其补充到一个 Vite 应用的客户端代码环境中,需要添加 d.ts 声明文件
+
+       ```js
+       /// <reference types="vite/client"/>
+       // 或者,可以将vite/client 添加到tsconfig.json中的compilerOptions.types下:
+       {
+        "compilerOptions":{
+          "types":["vite/client"]
+        }
+       }
+       ```
 
 4. Vue
 
